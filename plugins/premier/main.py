@@ -84,7 +84,7 @@ class PremierCog(commands.Cog):
         channel_id = 691378116710498317
         channel = self.bot.get_channel(channel_id)
 
-        if dt.now().weekday() in {3, 4, 5,6}:
+        if dt.now().weekday() in {3, 5,6}:
             content = "".join(f"<@{user_id}>" for user_id in Premier.team)
 
             embed=discord.Embed(
