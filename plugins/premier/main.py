@@ -52,14 +52,13 @@ class CheckInView(discord.ui.View):
 
 @dataclass
 class Premier:
-    # team = [306081415643004928,
-    #         265613905957486592,
-    #         316927311238660097,
-    #         457956796061974529,
-    #         480147211062083584,
-    #         385849697904099329
-    #         ]
-    team = [306081415643004928]
+    team = [306081415643004928,
+            265613905957486592,
+            316927311238660097,
+            457956796061974529,
+            480147211062083584,
+            385849697904099329
+            ]
     
     next_match = {'present': [], 
                   'absent': []
@@ -82,7 +81,7 @@ class PremierCog(commands.Cog):
     
     @tasks.loop(time=[time(hour=timezone_to_utc(hour=16).time().hour)])
     async def check_in(self)->discord.Message:
-        channel_id = 1146395373225648178
+        channel_id = 691378116710498317
         channel = self.bot.get_channel(channel_id)
 
         if dt.now().weekday() in {3, 4, 5,6}:
