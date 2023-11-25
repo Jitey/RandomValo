@@ -7,6 +7,7 @@ from datetime import time, datetime as dt
 import pytz
 
 
+
 # |----------UI du check_in----------|
 class CheckInView(discord.ui.View):
     def __init__(self):
@@ -52,6 +53,8 @@ class CheckInView(discord.ui.View):
 
 @dataclass
 class Premier:
+    role_id = 1178001872901128232
+    role = None
     team = [306081415643004928,
             265613905957486592,
             316927311238660097,
@@ -70,9 +73,8 @@ class PremierCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         self.check_in.start()
-        
     
-    
+
 
     def timezone_to_utc(year: int=dt.now().year, month:int=1, day: int=1, hour: int=0, minute: int=0, second: int=0):
         hour_task_tz = dt(year=year, month=month, day=day, hour=hour, minute=minute, second=second)
@@ -80,20 +82,19 @@ class PremierCog(commands.Cog):
     
     
     @tasks.loop(time=[time(hour=timezone_to_utc(hour=16).time().hour)])
-    async def check_in(self)->discord.Message:
+    @commands.hybrid_command(name='check_in')
+    async def check_in(self, ctx)->discord.Message:
         channel_id = 691378116710498317
         channel = self.bot.get_channel(channel_id)
 
         if dt.now().weekday() in {3, 5,6}:
-            content = "".join(f"<@{user_id}>" for user_id in Premier.team)
-
             embed=discord.Embed(
                 title="Check-in match Premier",
                 description="Qui sera là ce soir ?",
                 color=0x7E6A4F
             )
 
-            await channel.send(content, embed=embed, view=CheckInView())
+            await channel.send(f"{Premier.role.mention}", embed=embed, view=CheckInView())
     
     
     @check_in.before_loop
@@ -101,6 +102,8 @@ class PremierCog(commands.Cog):
         for e in Premier.next_match.values():
                 e.clear()
         await self.bot.wait_until_ready()
+        serveur = self.bot.get_guild(691378116710498314)
+        Premier.role = serveur.get_role(Premier.role_id)
         
     
         

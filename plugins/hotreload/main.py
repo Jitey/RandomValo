@@ -34,7 +34,7 @@ class HotReload(commands.Cog):
         self.load_new_cogs_loop.stop()
 
 
-    @tasks.loop(hours=1)
+    @tasks.loop(minutes=1)
     async def hot_reload_loop(self):
         
         for extension in list(self.bot.extensions.keys()):
@@ -61,7 +61,7 @@ class HotReload(commands.Cog):
                 self.last_modified_time[extension] = time
 
             
-    @tasks.loop(hours=1)
+    @tasks.loop(minutes=1)
     async def load_new_cogs_loop(self):
         for plugin in glob.glob(f"{parent_folder}/**"):
             extension = '.'.join(plugin.split('/')[-2:]) + '.main'
