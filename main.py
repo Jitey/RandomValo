@@ -11,7 +11,7 @@ from discord.ext import commands
 parent_folder = Path(__file__).resolve().parent
 load_dotenv(dotenv_path=f"{parent_folder}/.env")
 
-PREFIX = '='
+PREFIX = '.'
 
 async def load_all_extensions(bot: commands.Bot):
     for plugin in glob.glob(f"{parent_folder}/plugins/**"):
