@@ -115,8 +115,12 @@ class PremierCog(commands.Cog):
     
     @commands.hybrid_command(name='reload')
     async def reload(self, ctx: commands.Context):
-        await ctx.message.delete()
-        await self.reload_check_in(ctx)
+        try:
+            await ctx.message.delete()
+        except discord.Forbidden:
+            pass
+        finally:
+            await self.reload_check_in(ctx)
         
     
     async def reload_check_in(self, ctx: commands.Context):
