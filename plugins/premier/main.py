@@ -82,8 +82,7 @@ class PremierCog(commands.Cog):
     
     
     @tasks.loop(time=[time(hour=timezone_to_utc(hour=16).time().hour)])
-    @commands.hybrid_command(name='check_in')
-    async def check_in(self, ctx)->discord.Message:
+    async def check_in(self)->discord.Message:
         channel_id = 691378116710498317
         channel = self.bot.get_channel(channel_id)
 
