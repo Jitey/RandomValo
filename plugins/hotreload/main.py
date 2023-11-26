@@ -34,7 +34,7 @@ class HotReload(commands.Cog):
         self.load_new_cogs_loop.stop()
 
 
-    @tasks.loop(minutes=1)
+    @tasks.loop(seconds=3)
     async def hot_reload_loop(self):
         
         for extension in list(self.bot.extensions.keys()):
@@ -52,16 +52,16 @@ class HotReload(commands.Cog):
             try:
                 await self.bot.reload_extension(extension)
             except commands.ExtensionError:
-                print(f"Couldn't reload extension: {extension}")
+                print(f"Couldn't reload extension: {extension.split('.')[1]}")
             except commands.ExtensionNotLoaded:
                 continue
             else:
-                print(f"Reloaded extension: {extension}")
+                print(f"Reloaded extension: {extension.split('.')[1]}")
             finally:
                 self.last_modified_time[extension] = time
 
             
-    @tasks.loop(minutes=1)
+    @tasks.loop(seconds=3)
     async def load_new_cogs_loop(self):
         for plugin in glob.glob(f"{parent_folder}/**"):
             extension = '.'.join(plugin.split('/')[-2:]) + '.main'
@@ -74,11 +74,11 @@ class HotReload(commands.Cog):
             try:
                 await self.bot.load_extension(extension)
             except commands.ExtensionError:
-                print(f"Couldn't load extension: {extension}")
+                print(f"Couldn't load extension: {extension.split('.')[1]}")
             except commands.ExtensionNotLoaded:
                 continue
             else:
-                print(f"Loaded extension: {extension}")
+                print(f"Loaded extension: {extension.split('.')[1]}")
             finally:
                 self.last_modified_time[extension] = time
 

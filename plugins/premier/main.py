@@ -2,10 +2,15 @@ import discord
 from discord.ext import commands
 from discord.ext import tasks
 
+from pathlib import Path
+import json
+parent_folder = Path(__file__).resolve().parent
+
 from dataclasses import dataclass
 from datetime import time, datetime as dt
 import pytz
 
+from icecream import ic
 
 
 # |----------UI du check_in----------|
@@ -83,6 +88,7 @@ class PremierCog(commands.Cog):
     
     @tasks.loop(time=[time(hour=timezone_to_utc(hour=16).time().hour)])
     async def check_in(self)->discord.Message:
+        messages = self.load_json('message')
         channel_id = 691378116710498317
         channel = self.bot.get_channel(channel_id)
 
@@ -93,7 +99,9 @@ class PremierCog(commands.Cog):
                 color=0x7E6A4F
             )
 
-            await channel.send(f"{Premier.role.mention}", embed=embed, view=CheckInView())
+            msg = await channel.send(f"{Premier.role.mention}", embed=embed, view=CheckInView())
+            messages['last_message'] = msg.id
+            self.write_json(messages,'message')
     
     
     @check_in.before_loop
@@ -105,6 +113,26 @@ class PremierCog(commands.Cog):
         Premier.role = serveur.get_role(Premier.role_id)
         
     
+    @commands.hybrid_command(name='reload')
+    async def reload(self, ctx: commands.Context):
+        await ctx.message.delete()
+        await self.reload_check_in(ctx)
+        
+    
+    async def reload_check_in(self, ctx: commands.Context):
+        channel = ctx.channel
+        if last_message_id := self.load_json('message')['last_message']:
+            msg = await channel.fetch_message(last_message_id)
+            await msg.edit(view=CheckInView())
+    
+    
+    def load_json(self, file: str)->dict:
+        with open(f"{parent_folder}/{file}.json", 'r') as f:
+            return json.load(f)
+    
+    def write_json(self, data: dict, path: str)->None:
+        with open(f"{parent_folder}/{path}.json", 'w') as f:
+            json.dump(data, f, indent=2)
         
     
     
