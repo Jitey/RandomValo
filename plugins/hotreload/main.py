@@ -65,7 +65,7 @@ class HotReload(commands.Cog):
                 last_commit = repo.head.commit
                 if last_commit.committed_datetime > last_commit_saved:
                     repo.git.pull() 
-                    with open(f"{parent_folder}/hotreload/save.json", 'w') as f:
+                    with open(f"{parent_folder}/save.json", 'w') as f:
                         json.dump({'last_commit': f"{last_commit.committed_datetime}"}, f, indent=2)
                     logging.info("Pull réussi")
             except git.GitCommandError as e:
