@@ -125,7 +125,7 @@ class PremierCog(commands.Cog):
         
     
     @commands.Cog.listener(name='on_reaction_add')
-    async def reload(self, reaction: discord.Reaction, user: discord.Member):
+    async def reload_reaction(self, reaction: discord.Reaction, user: discord.Member):
         if reaction.emoji == "🔄":
             await self.reload_check_in(reaction.message.channel)
         
