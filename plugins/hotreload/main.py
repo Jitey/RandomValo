@@ -11,13 +11,15 @@ from datetime import datetime as dt
 
 from icecream import ic
 import logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.ERROR, format='%(levelname)s: %(message)s')
 
 
 
 IGNORE_EXTENSIONS = []
-parent_folder = '/'.join(str(pathlib.Path(__file__).resolve().parent).split('/')[:-1])
+plugins_folder = '/'.join(str(pathlib.Path(__file__).resolve().parent).split('/')[:-1])
+parent_folder = pathlib.Path(__file__).resolve().parent
 GITHUB_REPOSITORY = "/home/container/RandomValo"
+GITHUB_REPOSITORY = "/Users/jitey/Documents/Python/Bot/Discord/RandomValo"
 
 
 
@@ -57,13 +59,13 @@ class HotReload(commands.Cog):
         
         with open(f"{parent_folder}/save.json", 'r') as f:
             last_commit_saved_str = json.load(f)['last_commit']
+
         last_commit_saved = dt.strptime(last_commit_saved_str, "%Y-%m-%d %H:%M:%S%z")
-        
         try:
             last_commit = repo.head.commit
             if last_commit.committed_datetime > last_commit_saved:
                 repo.git.pull() 
-                with open(f"{parent_folder}/save.json", 'w') as f:
+                with open(f"{parent_folder}/hotreload/save.json", 'w') as f:
                     json.dump({'last_commit': f"{last_commit.committed_datetime}"}, f, indent=2)
                 logging.info("Pull réussi")
         except git.GitCommandError as e:
@@ -74,7 +76,7 @@ class HotReload(commands.Cog):
                 
     @tasks.loop(seconds=3)
     async def hot_reload_loop(self):
-        
+
         for extension in list(self.bot.extensions.keys()):
             if extension in IGNORE_EXTENSIONS:
                 continue
@@ -101,7 +103,7 @@ class HotReload(commands.Cog):
             
     @tasks.loop(seconds=3)
     async def load_new_cogs_loop(self):
-        for plugin in glob.glob(f"{parent_folder}/**"):
+        for plugin in glob.glob(f"{plugins_folder}/**"):
             extension = '.'.join(plugin.split('/')[-2:]) + '.main'
             path = path_from_extension(extension)
             time = os.path.getmtime(path)
@@ -124,7 +126,7 @@ class HotReload(commands.Cog):
     @pull_from_github.before_loop
     async def demarage(self):
         await self.bot.wait_until_ready()
-        with open('save.json', 'r') as f:
+        with open(f"{parent_folder}/save.json", 'r') as f:
             self.last_commit =  json.load(f)['last_commit']
 
 
