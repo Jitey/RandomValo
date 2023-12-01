@@ -102,6 +102,7 @@ class PremierCog(commands.Cog):
             msg = await channel.send(f"{Premier.role.mention}", embed=embed, view=CheckInView())
             messages['last_message'] = msg.id
             self.write_json(messages,'message')
+            await msg.add_reaction("🔄")
     
     
     @check_in.before_loop
@@ -120,11 +121,16 @@ class PremierCog(commands.Cog):
         except discord.Forbidden:
             pass
         finally:
-            await self.reload_check_in(ctx)
+            await self.reload_check_in(ctx.channel)
         
     
-    async def reload_check_in(self, ctx: commands.Context):
-        channel = ctx.channel
+    @commands.Cogs.listener(name='on_reaction_add')
+    async def reload(self, reaction: discord.Reaction, user: discord.Member):
+        if reaction.emoji == "🔄":
+            await self.reload_check_in(reaction.message.channel)
+        
+    
+    async def reload_check_in(self, channel: discord.TextChannel):
         if last_message_id := self.load_json('message')['last_message']:
             msg = await channel.fetch_message(last_message_id)
             await msg.edit(view=CheckInView())
