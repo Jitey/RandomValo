@@ -34,7 +34,7 @@ class RandomValo(commands.Bot):
         activity = discord.Game(name="VALORANT")
         await self.change_presence(status=discord.Status.online, activity=activity)
         
-        print(f'Connecté en tant que {self.user.name} dans {parent_folder}')
+        print(f'Connecté en tant que {self.user.name}')
 
 
 
