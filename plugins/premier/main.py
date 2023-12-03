@@ -87,7 +87,7 @@ class PremierCog(commands.Cog):
         return hour_task_tz.astimezone(pytz.UTC)    
     
     
-    @tasks.loop(time=[time(hour=timezone_to_utc(hour=17).time().hour)])
+    @tasks.loop(time=[time(hour=timezone_to_utc(hour=16).time().hour)])
     async def check_in(self)->discord.Message:
         messages = self.load_json('message')
         channel_id = 691378116710498317
