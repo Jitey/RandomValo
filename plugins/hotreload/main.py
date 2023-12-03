@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.ERROR, format='%(levelname)s: %(message)s')
 
 
 
-IGNORE_EXTENSIONS = []
+IGNORE_EXTENSIONS = ['premier']
 plugins_folder = '/'.join(str(pathlib.Path(__file__).resolve().parent).split('/')[:-1])
 parent_folder = pathlib.Path(__file__).resolve().parent
 GITHUB_REPOSITORY = "/home/container/RandomValo"
