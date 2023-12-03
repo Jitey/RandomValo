@@ -32,7 +32,7 @@ class CheckInView(discord.ui.View):
         
         embed.add_field(name='Présents', value=joueurs_presents, inline=True)
         embed.add_field(name='Absents', value=joueurs_absents, inline=True)
-        embed.set_footer(text="`.reload` en cas de problème")
+        embed.set_footer(text=".reload en cas de problème")
         await interaction.response.edit_message(embed=embed)
 
     
@@ -99,12 +99,11 @@ class PremierCog(commands.Cog):
                 description="Qui sera là ce soir ?",
                 color=0x7E6A4F
             )
-            embed.set_footer(text="`.reload` en cas de problème")
+            embed.set_footer(text=".reload en cas de problème")
 
             msg = await channel.send(f"{Premier.role.mention}", embed=embed, view=CheckInView())
             messages['last_message'] = msg.id
             self.write_json(messages,'message')
-            await msg.add_reaction("🔄")
     
     
     @check_in.before_loop
