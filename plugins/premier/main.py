@@ -78,7 +78,7 @@ class Premier:
 class PremierCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        self.check_in.start()
+        # self.check_in.start()
     
 
 
@@ -87,32 +87,32 @@ class PremierCog(commands.Cog):
         return hour_task_tz.astimezone(pytz.UTC)    
     
     
-    @tasks.loop(time=[time(hour=timezone_to_utc(hour=16).time().hour)])
-    async def check_in(self)->discord.Message:
-        messages = self.load_json('message')
-        channel_id = 691378116710498317
-        channel = self.bot.get_channel(channel_id)
+    # @tasks.loop(time=[time(hour=timezone_to_utc(hour=16).time().hour)])
+    # async def check_in(self)->discord.Message:
+    #     messages = self.load_json('message')
+    #     channel_id = 691378116710498317
+    #     channel = self.bot.get_channel(channel_id)
 
-        if dt.now().weekday() in {3, 5,6}:
-            embed=discord.Embed(
-                title="Check-in match Premier",
-                description="Qui sera là ce soir ?",
-                color=0x7E6A4F
-            )
-            embed.set_footer(text=".reload en cas de problème")
+    #     if dt.now().weekday() in {3, 5,6}:
+    #         embed=discord.Embed(
+    #             title="Check-in match Premier",
+    #             description="Qui sera là ce soir ?",
+    #             color=0x7E6A4F
+    #         )
+    #         embed.set_footer(text=".reload en cas de problème")
 
-            msg = await channel.send(f"{Premier.role.mention}", embed=embed, view=CheckInView())
-            messages['last_message'] = msg.id
-            self.write_json(messages,'message')
+    #         msg = await channel.send(f"{Premier.role.mention}", embed=embed, view=CheckInView())
+    #         messages['last_message'] = msg.id
+    #         self.write_json(messages,'message')
     
     
-    @check_in.before_loop
-    async def before_check_in(self)->None:
-        for e in Premier.next_match.values():
-                e.clear()
-        await self.bot.wait_until_ready()
-        serveur = self.bot.get_guild(691378116710498314)
-        Premier.role = serveur.get_role(Premier.role_id)
+    # @check_in.before_loop
+    # async def before_check_in(self)->None:
+    #     for e in Premier.next_match.values():
+    #             e.clear()
+    #     await self.bot.wait_until_ready()
+    #     serveur = self.bot.get_guild(691378116710498314)
+    #     Premier.role = serveur.get_role(Premier.role_id)
         
     
     @commands.hybrid_command(name='reload')
