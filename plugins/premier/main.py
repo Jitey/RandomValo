@@ -16,7 +16,7 @@ from icecream import ic
 # |----------UI du check_in----------|
 class CheckInView(discord.ui.View):
     def __init__(self):
-        super().__init__()
+        super().__init__(timeout=None)
     
     
     
@@ -37,21 +37,31 @@ class CheckInView(discord.ui.View):
 
     
     
-    @discord.ui.button(label="Présent", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Présent", style=discord.ButtonStyle.green, custom_id='present_button')
     async def prensent(self, interaction: discord.Interaction, button: discord.Button)->None:
         user = interaction.user
-        Premier.next_match['present'].append(interaction.user)
         if user in Premier.next_match['absent']:
             Premier.next_match['absent'].remove(user)
+        
+        if user in Premier.next_match['present']:
+            Premier.next_match['present'].remove(user)
+        else:
+            Premier.next_match['present'].append(interaction.user)
+        
         await self.update_check_in(interaction)
     
 
-    @discord.ui.button(label="Pas dispo", style=discord.ButtonStyle.red)
+    @discord.ui.button(label="Pas dispo", style=discord.ButtonStyle.red, custom_id='absent_button')
     async def non_prensent(self, interaction: discord.Interaction, button: discord.Button)->None:
         user = interaction.user
-        Premier.next_match['absent'].append(interaction.user)
         if user in Premier.next_match['present']:
             Premier.next_match['present'].remove(user)
+        
+        if user in Premier.next_match['absent']:
+            Premier.next_match['absent'].remove(user)
+        else:
+            Premier.next_match['absent'].append(interaction.user)
+
         await self.update_check_in(interaction)
 
 
@@ -99,7 +109,6 @@ class PremierCog(commands.Cog):
     #             description="Qui sera là ce soir ?",
     #             color=0x7E6A4F
     #         )
-    #         embed.set_footer(text=".reload en cas de problème")
 
     #         msg = await channel.send(f"{Premier.role.mention}", embed=embed, view=CheckInView())
     #         messages['last_message'] = msg.id
@@ -153,3 +162,4 @@ class PremierCog(commands.Cog):
 
 async def setup(bot: commands.Bot)->None:
     await bot.add_cog(PremierCog(bot))
+    bot.add_view(CheckInView())
