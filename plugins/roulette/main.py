@@ -223,7 +223,7 @@ class RerollView(discord.ui.View):
 # |----------UI de la commande de weapon----------|
 class WeaponView(discord.ui.View):
     def __init__(self, weapons: list[Weapon]) -> None:
-        super().__init__()
+        super().__init__(timeout=None)
         self.petite_arme = 0
         self.start = 0
         self.end = len(weapons)
@@ -305,10 +305,10 @@ class Game:
     @classmethod
     def user_in_team(cls, user_id, equipe: list=[], index: int=0)->(bool, discord.Member):
         if not equipe:
-            equipe = cls.participants[index] 
+            equipe = cls.participants[index]
+            
         for user in equipe:
-            if user.id == user_id:
-                return user
+            return user if user.id == user_id else None
 
 
 
@@ -324,7 +324,7 @@ class RouletteCog(commands.Cog):
         
     # |---------Commandes---------|
     @commands.hybrid_command(name="start", description="Lance une nouvelle partie")
-    async def select_start(self, ctx: commands.Context )->discord.Message:
+    async def select_start(self, ctx: commands.Context)->discord.Message:
         self.mode_aleatoire = ""
         embed=discord.Embed(
             title = "Choix du mode de jeu",
@@ -334,7 +334,7 @@ class RouletteCog(commands.Cog):
         
     
     @commands.hybrid_command(name="agent", description="Attribut un agent aléatoirement à tout les joueurs")
-    async def agent(self, ctx: commands.Context )->discord.Message:
+    async def agent(self, ctx: commands.Context)->discord.Message:
         self.mode_aleatoire = 'Full random'
 
         N = [len(e) for e in Game.participants]
@@ -371,8 +371,8 @@ class RouletteCog(commands.Cog):
             await ctx.reply(embed=embed, mention_author=False)
 
 
-    @commands.hybrid_command(name="goodcomp", description="Comme `agent` mais en utilisant un agent de chaque rôle")
-    async def goodcomp(self, ctx: commands.Context )->discord.Message:
+    @commands.hybrid_command(name="goodcomp", description="Comme `agent` mais utilise un agent de chaque rôle")
+    async def goodcomp(self, ctx: commands.Context)->discord.Message:
         self.mode_aleatoire = 'Goodcomp'
 
         liste_role = ['duelist',
@@ -423,7 +423,7 @@ class RouletteCog(commands.Cog):
 
 
     @commands.hybrid_command(name="reroll", description="Choisit un nouvel agent. À utiliser uniquement si l'agent choisit par .agent n'est pas possedé")
-    async def reroll(self, ctx: commands.Context )->discord.Message:
+    async def reroll(self, ctx: commands.Context)->discord.Message:
         user = ctx.author
         try:
             if not Game.lineup[0]:
@@ -454,7 +454,7 @@ class RouletteCog(commands.Cog):
 
 
     @commands.hybrid_command(name="weapon", description="Ouvre un menu pour choisir les armes aléatoirement")
-    async def weapon(self, ctx: commands.Context )->discord.Message:
+    async def weapon(self, ctx: commands.Context)->discord.Message:
         embed=discord.Embed(
             title = "Choix du type de round",
             color = 0xAE02A1
@@ -463,14 +463,14 @@ class RouletteCog(commands.Cog):
 
 
     @commands.hybrid_command(name='spike', description="Désigne le spike carier")
-    async def spike(self, ctx: commands.Context):
+    async def spike(self, ctx: commands.Context)->discord.Message:
         await ctx.reply(f"Spike carrier : {rd.choice(Game.participants[Game.get_team(ctx.author)]).mention}")
 
 
 
 
     # |------------Annexes------------|
-    def load_data(self, object:str):
+    def load_data(self, object:str)->list[Agent|Weapon]:
         dict_classes_object = {'Agents': Agent,
                             'Weapons': Weapon
                             }
@@ -500,3 +500,4 @@ class RouletteCog(commands.Cog):
 
 async def setup(bot: commands.Bot)->None:
     await bot.add_cog(RouletteCog(bot))
+    bot.add_view(WeaponView())
