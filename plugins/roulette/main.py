@@ -500,4 +500,3 @@ class RouletteCog(commands.Cog):
 
 async def setup(bot: commands.Bot)->None:
     await bot.add_cog(RouletteCog(bot))
-    bot.add_view(WeaponView())
