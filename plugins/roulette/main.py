@@ -229,7 +229,7 @@ class WeaponView(discord.ui.View):
         self.end = len(weapons)
         self.weapons = weapons
         self.shield = ['Aucun','Petit','Gros']
-        self.shield_proba = [1/5,2/5,2/5]
+        self.shield_proba = [1/10,4.5/10,4.5/10]
         self.last_message = None
 
                 
@@ -464,7 +464,9 @@ class RouletteCog(commands.Cog):
 
     @commands.hybrid_command(name='spike', description="Désigne le spike carier")
     async def spike(self, ctx: commands.Context)->discord.Message:
-        await ctx.reply(f"Spike carrier : {rd.choice(Game.participants[Game.get_team(ctx.author)]).mention}")
+        return await ctx.reply(f"Spike carrier : {rd.choice(Game.participants[Game.get_team(ctx.author)]).mention}")
+        # channel = self.bot.get_channel(691378116710498317)
+        # return await channel.send("Il est au taquet le p'tit smokyz")
 
 
 
@@ -482,12 +484,12 @@ class RouletteCog(commands.Cog):
             classe_object = dict_classes_object[object]
         return [classe_object(nom,classe) for nom, classe in curseur.fetchall()]
 
-    async def send_error(self, ctx: commands.Context, error: Error)->None:
+    async def send_error(self, ctx: commands.Context, error: Error)->discord.Message:
         embed = discord.Embed(
                         title=f"{type(error).__name__}",
                         description=error,
                     )
-        await ctx.reply(embed=embed, mention_author=False)
+        return await ctx.reply(embed=embed, mention_author=False)
 
     def agents_by_role(self, role: str)->list[Agent]:
         return [agent for agent in self.agents if agent.role==role]
