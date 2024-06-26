@@ -303,7 +303,7 @@ class Game:
                 return i
     
     @classmethod
-    def user_in_team(cls, user_id, equipe: list=[], index: int=0)->(bool, discord.Member):
+    def user_in_team(cls, user_id, equipe: list=[], index: int=0)->tuple[bool, discord.Member]:
         if not equipe:
             equipe = cls.participants[index]
             
@@ -350,7 +350,7 @@ class RouletteCog(commands.Cog):
                     res = rd.choice(self.agents,size=N[k],replace=False)
                     for i in range(N[k]):
                         result += f"{Game.participants[k][i].mention}: {res[i].nom}\n"
-                        Game.lineup[0][Game.participants[k][i]] = res[i]    
+                        Game.lineup[k][Game.participants[k][i]] = res[i]    
 
                     embed = discord.Embed(
                         title="Composition de l'équipes",
@@ -402,8 +402,8 @@ class RouletteCog(commands.Cog):
 
                     if full:
                         res = rd.choice(agent_tampon)
-                        result += f"{Game.participants[k][i].mention}: {res.nom}\n"
-                        Game.lineup[-1][Game.participants[k][i]] = res
+                        result += f"{Game.participants[-1][i].mention}: {res.nom}\n"
+                        Game.lineup[-1][Game.participants[-1][i]] = res
 
                     embed = discord.Embed(
                         title="Composition de l'équipe",
