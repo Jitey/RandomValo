@@ -7,6 +7,7 @@ from pathlib import Path
 
 from numpy import random as rd
 
+parent_folder = Path(__file__).resolve().parent
 
 
 
@@ -303,7 +304,7 @@ class Game:
                 return i
     
     @classmethod
-    def user_in_team(cls, user_id, equipe: list=[], index: int=0)->(bool, discord.Member):
+    def user_in_team(cls, user_id, equipe: list=[], index: int=0)-> tuple[bool, discord.Member]:
         if not equipe:
             equipe = cls.participants[index]
             
@@ -320,6 +321,7 @@ class RouletteCog(commands.Cog):
         self.mode_aleatoire = ""
         self.agents = self.load_data('Agents')
         self.weapons = self.load_data('Weapons')
+    
         
         
     # |---------Commandes---------|
@@ -473,11 +475,12 @@ class RouletteCog(commands.Cog):
 
     # |------------Annexes------------|
     def load_data(self, object:str)->list[Agent|Weapon]:
-        dict_classes_object = {'Agents': Agent,
-                            'Weapons': Weapon
-                            }
+        dict_classes_object = {
+            'Agents': Agent,
+            'Weapons': Weapon
+            }
 
-        with connect(f"{Path(__file__).resolve().parent}/valorant.sqlite") as connection:
+        with connect(f"{parent_folder}/valorant.sqlite") as connection:
             curseur = connection.cursor()
             
             curseur.execute(f"SELECT nom , classe FROM {object}")
