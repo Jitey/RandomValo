@@ -444,9 +444,9 @@ class RouletteCog(commands.Cog):
             elif self.mode_aleatoire == 'Goodcomp':
                 liste_agents = self.agents_by_role(current_lineup[user].role)
             
-            current_agent = current_lineup[user]
-            if current_agent in liste_agents:
-                liste_agents.remove(current_agent)
+            for agent in current_lineup:
+                if agent in liste_agents:
+                    liste_agents.remove(agent)
 
             res = rd.choice(liste_agents)
             return await ctx.send(f"{user.mention} as-tu {res.nom} ? (O/n)", view=RerollView(liste_agents, res))
