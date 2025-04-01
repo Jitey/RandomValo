@@ -37,7 +37,7 @@ class HotReload(commands.Cog):
         self.bot = bot
         self.hot_reload_loop.start()
         self.load_new_cogs_loop.start()
-        self.pull_from_github.start()
+        # self.pull_from_github.start()
 
 
     def cog_unload(self):

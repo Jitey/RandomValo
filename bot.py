@@ -2,6 +2,7 @@
 
 # |----------Module d'environnement-----------|
 from os import getenv
+from os.path import join
 from dotenv import load_dotenv
 from pathlib import Path
 import glob
@@ -9,19 +10,30 @@ import glob
 import discord
 from discord.ext import commands
 
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,  # Niveau de logging
+    format='\033[1m%(asctime)s\033[0m  [\033[1m%(levelname)s\033[0m]  %(message)s',  # Format du message
+    datefmt='%Y-%m-%d %H:%M:%S'  # Format de la date et heure
+)
 
 parent_folder = Path(__file__).resolve().parent
 load_dotenv(dotenv_path=f"{parent_folder}/.env")
 
-PREFIX = '.'
+PREFIX = ','
 IGNORE_EXTENSIONS = ['premier']
 
 
 async def load_all_extensions(bot: commands.Bot):
-    for plugin in glob.glob(f"{parent_folder}/plugins/**"):
+    for plugin in glob.glob(join(parent_folder, "plugins", "**")):
         extention = plugin.split('/')[-1]
         if extention not in IGNORE_EXTENSIONS:
-            await bot.load_extension(f"plugins.{extention}.main")
+            try:
+                await bot.load_extension(f"plugins.{extention}.main")
+                logging.info(f"Extension {extention} chargée")
+            except Exception as error:
+                logging.error(f"Un problème est survenu lors du chargement de l'extension {extention}\n{error}")
         
 
 
