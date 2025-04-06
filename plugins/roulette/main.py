@@ -389,11 +389,6 @@ class RouletteCog(commands.Cog):
             discord.Message: Choix du mode de jeu
         """
         game = self.games[ctx.guild.id] = Game()
-        game.participants[0].append(self.bot.get_user(403232638317625344))
-        game.participants[0].append(self.bot.get_user(403191315887685632))
-        game.participants[0].append(self.bot.get_user(511177464043536385))
-        game.participants[0].append(self.bot.get_user(295559571223740417))
-        game.participants[0].append(self.bot.get_user(306081415643004928))
 
         self.mode_aleatoire = ""
         embed=discord.Embed(
