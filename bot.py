@@ -12,38 +12,58 @@ from discord.ext import commands
 
 import logging
 
+
+
+class ColoredFormatter(logging.Formatter):
+    COLORS = {
+        "DEBUG": "\033[92m",  # Vert
+        "INFO": "\033[94m",   # Bleu
+        "WARNING": "\033[93m",  # Jaune
+        "ERROR": "\033[91m",  # Rouge
+        "CRITICAL": "\033[95m",  # Magenta
+    }
+    RESET = "\033[0m"
+
+    def format(self, record):
+        color = self.COLORS.get(record.levelname, self.RESET)
+        record.levelname = f"{color}{record.levelname}{self.RESET}"
+        return super().format(record)
+
+# Appliquez le gestionnaire personnalisé
+formatter = ColoredFormatter(
+    fmt='\033[90m\033[1m%(asctime)s\033[0m %(levelname)s   %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+handler = logging.StreamHandler()
+handler.setFormatter(formatter)
+
 logging.basicConfig(
-    level=logging.INFO,  # Niveau de logging
-    format='\033[1m%(asctime)s\033[0m  [\033[1m%(levelname)s\033[0m]  %(message)s',  # Format du message
-    datefmt='%Y-%m-%d %H:%M:%S'  # Format de la date et heure
+    level=logging.INFO,
+    handlers=[handler]
 )
 
-parent_folder = Path(__file__).resolve().parent
-load_dotenv(dotenv_path=f"{parent_folder}/.env")
+
+
+
+
+PARENT_FOLDER = Path(__file__).resolve().parent
+load_dotenv(dotenv_path=f"{PARENT_FOLDER}/.env")
 
 PREFIX = ','
-IGNORE_EXTENSIONS = ['premier']
+IGNORED_EXTENSIONS = ['premier']
 
 
-async def load_all_extensions(bot: commands.Bot):
-    for plugin in glob.glob(join(parent_folder, "plugins", "**")):
-        extention = plugin.split('/')[-1]
-        if extention not in IGNORE_EXTENSIONS:
-            try:
-                await bot.load_extension(f"plugins.{extention}.main")
-                logging.info(f"Extension {extention} chargée")
-            except Exception as error:
-                logging.error(f"Un problème est survenu lors du chargement de l'extension {extention}\n{error}")
+
         
-
 
 class RandomValo(commands.Bot):
     def __init__(self) -> None:
         super().__init__(command_prefix=PREFIX, intents=discord.Intents.all())
+        self.IGNORED_EXTENSIONS = IGNORED_EXTENSIONS
     
     
     async def setup_hook(self) -> None:
-        await load_all_extensions(self)
+        await self.load_all_extensions()
         synced = await self.tree.sync()
         print(f"{len(synced)} commandes synchroisées")
 
@@ -55,6 +75,15 @@ class RandomValo(commands.Bot):
         print(f'Connecté en tant que {self.user.name}')
 
 
+    async def load_all_extensions(self) -> None:
+        for plugin in glob.glob(join(PARENT_FOLDER, "plugins", "**")):
+            extention = plugin.split('/')[-1]
+            if extention not in self.IGNORED_EXTENSIONS:
+                try:
+                    await bot.load_extension(f"plugins.{extention}.main")
+                    logging.info(f"Extension {extention} chargée")
+                except Exception as error:
+                    logging.error(f"Un problème est survenu lors du chargement de l'extension {extention}\n{error}")
 
 
 if __name__=='__main__':
