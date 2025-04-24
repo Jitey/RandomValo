@@ -122,7 +122,7 @@ class PremadeModal(discord.ui.Modal, title="Mode premade"):
     
     async def on_submit(self, interaction: discord.Interaction)->None:
         self.game.nb_joueurs = int(self.nombre.value)
-
+        self.game.reset()
         return await interaction.response.send_message(f"Réagir pour participer ({self.nombre.value} joueurs attendu)",view=PremadeView(self.game))
     
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
@@ -134,7 +134,6 @@ class PremadeView(discord.ui.View):
     def __init__(self, game: Game) -> None:
         super().__init__()
         self.game = game
-
 
         
     @discord.ui.button(label="Participer", style=discord.ButtonStyle.green)
@@ -368,7 +367,6 @@ class WeaponView(discord.ui.View):
 
 class RouletteCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
-
         self.bot = bot
         self.mode_aleatoire = ""
         self.agents: list[Agent] = self.load_data_from_json('Agents')
