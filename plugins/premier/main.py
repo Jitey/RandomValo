@@ -2,13 +2,12 @@ import discord
 from discord.ext import commands
 from discord.ext import tasks
 
-from pathlib import Path
 import json
-parent_folder = Path(__file__).resolve().parent
 
 from dataclasses import dataclass
 from datetime import time, datetime as dt
 import pytz
+from zoneinfo import ZoneInfo
 
 from icecream import ic
 
@@ -88,31 +87,23 @@ class Premier:
 class PremierCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        # self.check_in.start()
+        self.check_in.start()
     
 
-
-    def timezone_to_utc(year: int=dt.now().year, month:int=1, day: int=1, hour: int=0, minute: int=0, second: int=0):
-        hour_task_tz = dt(year=year, month=month, day=day, hour=hour, minute=minute, second=second)
-        return hour_task_tz.astimezone(pytz.UTC)    
     
-    
-    @tasks.loop(time=[time(hour=timezone_to_utc(hour=16).time().hour)])
+    @tasks.loop(time=time(hour=17, tzinfo=ZoneInfo("Europe/Paris")))
     async def check_in(self)->discord.Message:
-        messages = self.load_json('message')
-        channel_id = 691378116710498317
+        channel_id = 691378116710498314
         channel = self.bot.get_channel(channel_id)
 
-        if dt.now().weekday() in {3, 5,6}:
+        if dt.now().weekday() in {3,5,6}:
             embed=discord.Embed(
                 title="Check-in match Premier",
                 description="Qui sera là ce soir ?",
                 color=0x7E6A4F
             )
 
-            msg = await channel.send(f"{Premier.role.mention}", embed=embed, view=CheckInView())
-            messages['last_message'] = msg.id
-            self.write_json(messages,'message')
+            await channel.send(f"{Premier.role.mention}", embed=embed, view=CheckInView())
     
     
     @check_in.before_loop
