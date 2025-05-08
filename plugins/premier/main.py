@@ -31,7 +31,6 @@ class CheckInView(discord.ui.View):
         
         embed.add_field(name='Présents', value=joueurs_presents, inline=True)
         embed.add_field(name='Absents', value=joueurs_absents, inline=True)
-        embed.set_footer(text=".reload en cas de problème")
         await interaction.response.edit_message(embed=embed)
 
     
