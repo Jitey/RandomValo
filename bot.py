@@ -1,7 +1,7 @@
 # Daki paid ID 557
 
 # |----------Module d'environnement-----------|
-from os import getenv
+from os import getenv, sep
 from os.path import join
 from dotenv import load_dotenv
 from pathlib import Path
@@ -50,7 +50,7 @@ PARENT_FOLDER = Path(__file__).resolve().parent
 load_dotenv(dotenv_path=f"{PARENT_FOLDER}/.env")
 
 PREFIX = ','
-IGNORED_EXTENSIONS = ['premier']
+IGNORED_EXTENSIONS = []
 
 
 
@@ -77,7 +77,7 @@ class RandomValo(commands.Bot):
 
     async def load_all_extensions(self) -> None:
         for plugin in glob.glob(join(PARENT_FOLDER, "plugins", "**")):
-            extention = plugin.split('/')[-1]
+            extention = plugin.split(sep)[-1]
             if extention not in self.IGNORED_EXTENSIONS:
                 try:
                     await bot.load_extension(f"plugins.{extention}.main")

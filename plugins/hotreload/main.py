@@ -15,7 +15,6 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 
 
-IGNORE_EXTENSIONS = ['ping','dashboard']
 plugins_folder = '/'.join(str(pathlib.Path(__file__).resolve().parent).split('/')[:-1])
 PARENT_FOLDER = pathlib.Path(__file__).resolve().parent
 GITHUB_REPOSITORY = PARENT_FOLDER.parent.parent
