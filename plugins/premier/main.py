@@ -93,7 +93,7 @@ class PremierCog(commands.Cog):
     
     @tasks.loop(time=time(hour=17, tzinfo=ZoneInfo("Europe/Paris")))
     async def check_in(self)->discord.Message:
-        channel_id = 691378116710498314
+        channel_id = 691378116710498317
         channel = self.bot.get_channel(channel_id)
 
         if dt.now().weekday() in {3,5,6}:
