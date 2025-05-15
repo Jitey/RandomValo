@@ -80,6 +80,10 @@ class Premier:
     next_match = {'present': [], 
                   'absent': []
                   }
+    
+    def reset(self)->None:
+        self.next_match['present'].clear()
+        self.next_match['absent'].clear()
 
 
 
@@ -96,6 +100,7 @@ class PremierCog(commands.Cog):
         channel = self.bot.get_channel(channel_id)
 
         if dt.now().weekday() in {3,5,6}:
+            Premier.reset()
             embed=discord.Embed(
                 title="Check-in match Premier",
                 description="Qui sera là ce soir ?",
