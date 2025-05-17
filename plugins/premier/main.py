@@ -81,9 +81,10 @@ class Premier:
                   'absent': []
                   }
     
-    def reset(self)->None:
-        self.next_match['present'].clear()
-        self.next_match['absent'].clear()
+    @classmethod
+    def reset(clc)->None:
+        clc.next_match['present'].clear()
+        clc.next_match['absent'].clear()
 
 
 
