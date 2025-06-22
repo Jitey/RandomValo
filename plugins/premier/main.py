@@ -92,6 +92,7 @@ class PremierCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         self.check_in.start()
+        self.activated = True
     
 
     
@@ -120,7 +121,17 @@ class PremierCog(commands.Cog):
         Premier.role = serveur.get_role(Premier.role_id)
         
     
-    
+    @commands.hybrid_command(name="switch", description="Activate or deactivate the check-in for the Premier matches.")
+    async def switch_check_in(self, ctx: commands.Context) -> None:
+        """Switch the check-in on or off."""
+        if self.activated:
+            self.check_in.stop()
+            await ctx.send("Check-in désactivé pour les matchs de la Premier.")
+        else:
+            self.check_in.start()
+            await ctx.send("Check-in activé pour les matchs de la Premier.")
+
+        self.activated ^= True
     
         
 
