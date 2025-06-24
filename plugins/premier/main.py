@@ -126,10 +126,10 @@ class PremierCog(commands.Cog):
         """Switch the check-in on or off."""
         if self.activated:
             self.check_in.stop()
-            await ctx.send("Check-in désactivé pour les matchs de la Premier.")
+            await ctx.send("Check-in désactivé pour les matchs Premier.")
         else:
             self.check_in.start()
-            await ctx.send("Check-in activé pour les matchs de la Premier.")
+            await ctx.send("Check-in activé pour les matchs Premier.")
 
         self.activated ^= True
     
