@@ -4,6 +4,7 @@ from discord.ext import tasks
 
 import json
 from os.path import join
+from pathlib import Path
 
 from dataclasses import dataclass
 from datetime import time, datetime as dt
@@ -89,6 +90,12 @@ class Premier:
 
 
 
+
+
+
+ROOT = Path(__file__).resolve().parent
+
+
 class PremierCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
@@ -142,7 +149,7 @@ class PremierCog(commands.Cog):
         Returns:
             dict: Données enregistrées
         """
-        with open(join(self.bot.ROOT,"datafile",f"{file}.json"), 'r') as f:
+        with open(join(ROOT,f"{file}.json"), 'r') as f:
             return json.load(f)
 
     def update_logs(self, data: dict, file: str)->None:
@@ -152,7 +159,7 @@ class PremierCog(commands.Cog):
             data (dict): Données à enregistrer
             path (str): Chemin du fichier à enregistrer
         """
-        with open(join(self.bot.ROOT,"datafile",f"{file}.json"), 'w') as f:
+        with open(join(ROOT,f"{file}.json"), 'w') as f:
             json.dump(data,f,indent=2) 
         
 
