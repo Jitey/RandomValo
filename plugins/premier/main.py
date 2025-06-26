@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord.ext import tasks
 
 import json
+from os.path import join
 
 from dataclasses import dataclass
 from datetime import time, datetime as dt
@@ -91,8 +92,8 @@ class Premier:
 class PremierCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        self.data = self.load_json("data_premier")
         self.check_in.start()
-        self.activated = True
     
 
     
@@ -101,15 +102,19 @@ class PremierCog(commands.Cog):
         channel_id = 691378116710498317
         channel = self.bot.get_channel(channel_id)
 
-        if dt.now().weekday() in {3,5,6}:
-            Premier.reset()
-            embed=discord.Embed(
-                title="Check-in match Premier",
-                description="Qui sera là ce soir ?",
-                color=0x7E6A4F
-            )
+        for server in self.data:
+            if not self.data[server]['check_in']:
+                return
+            
+            if dt.now().weekday() in {3,5,6}:
+                Premier.reset()
+                embed=discord.Embed(
+                    title="Check-in match Premier",
+                    description="Qui sera là ce soir ?",
+                    color=0x7E6A4F
+                )
 
-            await channel.send(f"{Premier.role.mention}", embed=embed, view=CheckInView())
+                await channel.send(f"{Premier.role.mention}", embed=embed, view=CheckInView())
     
     
     @check_in.before_loop
@@ -124,15 +129,31 @@ class PremierCog(commands.Cog):
     @commands.hybrid_command(name="switch", description="Activate or deactivate the check-in for the Premier matches.")
     async def switch_check_in(self, ctx: commands.Context) -> None:
         """Switch the check-in on or off."""
-        if self.activated:
-            self.check_in.stop()
-            await ctx.send("Check-in désactivé pour les matchs Premier.")
-        else:
-            self.check_in.start()
-            await ctx.send("Check-in activé pour les matchs Premier.")
-
-        self.activated ^= True
+        self.data[ctx.guild.name]['check_in'] ^= True
+        self.update_logs(self.data, "data_premier")
     
+    
+    def load_json(self, file: str)->dict:
+        """"Récupère les données du fichier json
+
+        Args:
+            file (str): Nom du fichier
+
+        Returns:
+            dict: Données enregistrées
+        """
+        with open(join(self.bot.ROOT,"datafile",f"{file}.json"), 'r') as f:
+            return json.load(f)
+
+    def update_logs(self, data: dict, file: str)->None:
+        """Enregistre le fichier logs
+
+        Args:
+            data (dict): Données à enregistrer
+            path (str): Chemin du fichier à enregistrer
+        """
+        with open(join(self.bot.ROOT,"datafile",f"{file}.json"), 'w') as f:
+            json.dump(data,f,indent=2) 
         
 
 

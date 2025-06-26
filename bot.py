@@ -60,6 +60,7 @@ class RandomValo(commands.Bot):
     def __init__(self) -> None:
         super().__init__(command_prefix=PREFIX, intents=discord.Intents.all())
         self.IGNORED_EXTENSIONS = IGNORED_EXTENSIONS
+        self.ROOT = PARENT_FOLDER
     
     
     async def setup_hook(self) -> None:
