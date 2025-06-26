@@ -138,6 +138,8 @@ class PremierCog(commands.Cog):
         """Switch the check-in on or off."""
         self.data[ctx.guild.name]['check_in'] ^= True
         self.update_logs(self.data, "data_premier")
+        
+        await ctx.send(f"Check-in {'activé' if self.data[ctx.guild.name]['check_in'] else 'désactivé'} pour les matchs Premier.", ephemeral=True)
     
     
     def load_json(self, file: str)->dict:
