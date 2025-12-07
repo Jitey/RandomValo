@@ -2,16 +2,15 @@ import os
 import pathlib
 import glob
 
-import discord
 from discord.ext import commands, tasks
 from bot import RandomValo
 
 import git
 from git import Repo
 
-import traceback
-import logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+from logs.logger_config import setup_logger
+
+logger = setup_logger()
 
 
 
@@ -72,9 +71,9 @@ class HotReload(commands.Cog):
             if last_remote_commit.committed_datetime > last_local_commit.committed_datetime:
                 repo.remotes.origin.pull()
                     
-                logging.info(f"Pull: {last_remote_commit.message[:-1]}")
+                logger.info(f"Pull: {last_remote_commit.message[:-1]}")
         except git.GitCommandError as e:
-            logging.warning(f"Erreur lors du pull : {e}")
+            logger.warning(f"Erreur lors du pull : {e}")
 
 
                 
@@ -100,7 +99,7 @@ class HotReload(commands.Cog):
             except commands.ExtensionNotLoaded:
                 continue
             else:
-                logging.info(f"Reloaded extension: {extension.split('.')[1]}")
+                logger.info(f"Reloaded extension: {extension.split('.')[1]}")
             finally:
                 self.last_modified_time[extension] = time
 
@@ -123,7 +122,7 @@ class HotReload(commands.Cog):
             except commands.ExtensionNotLoaded:
                 continue
             else:
-                logging.info(f"Loaded extension: {extension.split('.')[1]}")
+                logger.info(f"Loaded extension: {extension.split('.')[1]}")
             finally:
                 self.last_modified_time[extension] = time
 

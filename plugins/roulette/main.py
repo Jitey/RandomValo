@@ -4,14 +4,15 @@ from discord.ext import commands
 from dataclasses import dataclass
 from sqlite3 import *
 from pathlib import Path
+from os.path import join, sep
 
 from numpy import random as rd, ndarray
 from icecream import ic
 
 import json
-import pickle
 
-parent_folder = Path(__file__).resolve().parent
+
+PARENT_FOLDER = Path(__file__).resolve().parent
 
 
 
@@ -27,6 +28,12 @@ class Agent:
 class Weapon:
         nom: str
         type_arme: str
+        
+        
+dict_classes_object = {
+            'Agents': Agent,
+            'Weapons': Weapon
+            }
 
 
 
@@ -306,12 +313,12 @@ class RerollView(discord.ui.View):
 class WeaponView(discord.ui.View):
     def __init__(self, weapons: list[Weapon]) -> None:
         super().__init__(timeout=None)
-        self.petite_arme = 0
-        self.start = 0
+        self.petite_arme: int = 0
+        self.start: int = 0
         self.end = len(weapons)
         self.weapons = weapons
-        self.shield = ['Aucun','Petit','Gros']
-        self.shield_proba = [1/10,4.5/10,4.5/10]
+        self.shield = ['Aucun', 'Petit', 'Rege', 'Gros']
+        self.shield_proba = [1/10, 3/10, 3/10, 3/10]
         self.last_message = None
 
                 
@@ -319,12 +326,15 @@ class WeaponView(discord.ui.View):
         user = interaction.user
         if self.petite_arme==2:
             self.start = 5
-        self.petite_arme = (self.petite_arme + 1)%3
+        
+        # Incrémentation de la variable petite_arme jusqu'à 2
+        self.petite_arme = (self.petite_arme + 1) % 3
+        rand_idx = rd.randint(self.start, self.end)
         
         embed=discord.Embed(
         title = button.label,
-        description = f"Arme : **{self.weapons[rd.randint(self.start,self.end)].nom}**\n\
-                        Shield : **{rd.choice(self.shield)}**" ,
+        description = f"Arme : **{self.weapons[rand_idx].nom}**\n\
+                        Shield : **{rd.choice(self.shield, p=self.shield_proba)}**" ,
         color = 0xAE02A1
         )
         embed.set_author(name = user.display_name, icon_url = user.display_avatar)
@@ -336,8 +346,9 @@ class WeaponView(discord.ui.View):
     async def normale_button(self, interaction: discord.Interaction, button: discord.ui.Button)->None:
         self.start = 0
         self.end = len(self.weapons)
-        self.shield = ['Aucun','Petit','Gros']
-        self.shield_proba = [1/5,2/5,2/5]
+        self.shield = ['Aucun', 'Petit', 'Rege', 'Gros']
+        self.shield_proba = [1/6, 1/6, 2/6, 2/6]
+        
         await self.roll_weapon(interaction, button)
     
     
@@ -348,6 +359,7 @@ class WeaponView(discord.ui.View):
         self.petite_arme = 1
         self.shield = ['Aucun']
         self.shield_proba = [1]
+        
         await self.roll_weapon(interaction, button)
     
     
@@ -357,6 +369,7 @@ class WeaponView(discord.ui.View):
         self.end = 10
         self.shield = ['Aucun','Petit']
         self.shield_proba = [1/3,2/3]
+        
         await self.roll_weapon(interaction, button)
 
 
@@ -461,18 +474,20 @@ class RouletteCog(commands.Cog):
             for k in range(len(N)):
                 # Si l'équipe n'est pas vide
                 if N[k]:
-                    liste_role = ['duelist',
-                                    'controller',
-                                    'initiator',
-                                    'sentinel']
+                    liste_role = [
+                        'duelist',
+                        'controller',
+                        'initiator',
+                        'sentinel'
+                    ]
 
                     # Mélange l'ordre des rôles pour qu'ils soient attribué aléatoirement
                     rd.shuffle(liste_role)
-                
                     # Copie la liste des agents pour ne pas modifier l'original
                     agents_tampon = self.agents.copy()
+                
                     # Une équipe est complète si elle contient 5 joueurs
-                    full = N[k]==5
+                    full = (N[k] == 5)
                     if full:
                         # On s'occupe des 4 premiers joueurs pour avoir un joueur par rôle
                         N[k] -= 1
@@ -505,6 +520,7 @@ class RouletteCog(commands.Cog):
                     embed.set_author(name = author.display_name, icon_url = author.display_avatar)
 
                     await ctx.reply(embed=embed, mention_author=False)
+                    
         except (ValueError, IndexError) as error:
             embed = discord.Embed(
                         title=f"{type(error).__name__}",
@@ -570,11 +586,13 @@ class RouletteCog(commands.Cog):
         """
         try:
             game = self.games[ctx.guild.id]
-            return await ctx.reply(f"Spike carrier : {rd.choice(game.participants[game.get_team(ctx.author)]).mention}")
+            team = game.get_team(ctx.author)
+            return await ctx.reply(f"Spike carrier : {rd.choice(game.participants[team]).mention}")
+        
         except KeyError as error:
             embed = discord.Embed(
                         title=f"{type(error).__name__}",
-                        description="Tu dois d'abord créer équipement avec la commande `start`",
+                        description="Tu dois d'abord créer l'équipe avec la commande `start`",
                     )
             return await ctx.reply(embed=embed, mention_author=False)
 
@@ -605,29 +623,21 @@ class RouletteCog(commands.Cog):
         return rd.choice(self.agents_by_role(role))
 
     def load_data_from_sql(self, object:str)->list[Agent|Weapon]:
-        dict_classes_object = {
-            'Agents': Agent,
-            'Weapons': Weapon
-            }
-
-        with connect(f"{parent_folder}/valorant.sqlite") as connection:
+        with connect(f"{PARENT_FOLDER}/valorant.sqlite") as connection:
             curseur = connection.cursor()
             
             curseur.execute(f"SELECT nom , classe FROM {object}")
             classe_object = dict_classes_object[object]
-        return [classe_object(nom,classe) for nom, classe in curseur.fetchall()]
+            
+        return [classe_object(*args) for args in curseur.fetchall()]
 
-    def load_data_from_json(self, object:str)->list[Agent|Weapon]:
-        dict_classes_object = {
-            'Agents': Agent,
-            'Weapons': Weapon
-            }
-
-        with open(f"{parent_folder}/valorant.json") as file:
+    def load_data_from_json(self, object: str)->list[Agent|Weapon]:
+        with open(join(PARENT_FOLDER, "valorant.json")) as file:
             json_data = json.load(file)[object]
             
             classe_object = dict_classes_object[object]
-        return [classe_object(nom,classe) for nom, classe in json_data]
+            
+        return [classe_object(*args) for args in json_data]
 
     async def send_error(self, ctx: commands.Context, error: Error)->discord.Message:
         embed = discord.Embed(
