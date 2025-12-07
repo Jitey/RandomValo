@@ -10,37 +10,10 @@ import glob
 import discord
 from discord.ext import commands
 
-import logging
+from logs.logger_config import setup_logger
 
 
-
-class ColoredFormatter(logging.Formatter):
-    COLORS = {
-        "DEBUG": "\033[92m",  # Vert
-        "INFO": "\033[94m",   # Bleu
-        "WARNING": "\033[93m",  # Jaune
-        "ERROR": "\033[91m",  # Rouge
-        "CRITICAL": "\033[95m",  # Magenta
-    }
-    RESET = "\033[0m"
-
-    def format(self, record):
-        color = self.COLORS.get(record.levelname, self.RESET)
-        record.levelname = f"{color}{record.levelname}{self.RESET}"
-        return super().format(record)
-
-# Appliquez le gestionnaire personnalisé
-formatter = ColoredFormatter(
-    fmt='\033[90m\033[1m%(asctime)s\033[0m %(levelname)s   %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
-handler = logging.StreamHandler()
-handler.setFormatter(formatter)
-
-logging.basicConfig(
-    level=logging.INFO,
-    handlers=[handler]
-)
+logger = setup_logger()
 
 
 
@@ -49,8 +22,8 @@ logging.basicConfig(
 PARENT_FOLDER = Path(__file__).resolve().parent
 load_dotenv(dotenv_path=f"{PARENT_FOLDER}/.env")
 
-PREFIX = ','
-IGNORED_EXTENSIONS = []
+PREFIX: str = ','
+IGNORED_EXTENSIONS: list[str] = []
 
 
 
@@ -66,14 +39,14 @@ class RandomValo(commands.Bot):
     async def setup_hook(self) -> None:
         await self.load_all_extensions()
         synced = await self.tree.sync()
-        print(f"{len(synced)} commandes synchroisées")
+        logger.info(f"{len(synced)} commandes synchroisées")
 
     
     async def on_ready(self) -> None:
         activity = discord.Game(name="VALORANT")
         await self.change_presence(status=discord.Status.online, activity=activity)
         
-        print(f'Connecté en tant que {self.user.name}')
+        logger.info(f'Connecté en tant que {self.user.name}')
 
 
     async def load_all_extensions(self) -> None:
@@ -82,9 +55,9 @@ class RandomValo(commands.Bot):
             if extention not in self.IGNORED_EXTENSIONS:
                 try:
                     await bot.load_extension(f"plugins.{extention}.main")
-                    logging.info(f"Extension {extention} chargée")
+                    logger.info(f"Extension {extention} chargée")
                 except Exception as error:
-                    logging.error(f"Un problème est survenu lors du chargement de l'extension {extention}\n{error}")
+                    logger.error(f"Un problème est survenu lors du chargement de l'extension {extention}\n{error}")
 
 
 if __name__=='__main__':
