@@ -169,3 +169,4 @@ class PremierCog(commands.Cog):
 async def setup(bot: commands.Bot)->None:
     await bot.add_cog(PremierCog(bot))
     bot.add_view(CheckInView())
+# deploy-test: validation pipeline NAS (hot-reload, pas de restart)
