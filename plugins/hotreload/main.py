@@ -66,7 +66,7 @@ class HotReload(commands.Cog):
             try:
                 await self.bot.reload_extension(extension)
             except commands.ExtensionError:
-                print(f"Couldn't reload extension: {extension.split('.')[1]}")
+                logger.warning(f"Couldn't reload extension: {extension.split('.')[1]}")
             except commands.ExtensionNotLoaded:
                 continue
             else:
