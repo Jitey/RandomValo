@@ -1,5 +1,4 @@
 discord.py==2.3.2
-GitPython==3.1.55
 icecream==2.1.3
 numpy==1.26.2
 python-dotenv==1.0.0
