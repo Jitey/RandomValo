@@ -8,7 +8,6 @@ from pathlib import Path
 
 from dataclasses import dataclass
 from datetime import time, datetime as dt
-import pytz
 from zoneinfo import ZoneInfo
 
 from icecream import ic
