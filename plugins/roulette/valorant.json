@@ -1,51 +1,206 @@
 {
-    "Agents": [
-        ["Brimstone", "controller"],
-        ["Phoenix", "duelist"],
-        ["Sage", "sentinel"],
-        ["Sova", "initiator"],
-        ["Viper", "controller"],
-        ["Cypher", "sentinel"],
-        ["Reyna", "duelist"],
-        ["Killjoy", "sentinel"],
-        ["Breach", "initiator"],
-        ["Omen", "controller"],            
-        ["Jett", "duelist"],
-        ["Raze", "duelist"],
-        ["Skye", "initiator"],
-        ["Yoru", "duelist"],
-        ["Astra", "controller"],
-        ["Kay/o", "initiator"],
-        ["Chamber", "sentinel"],
-        ["Neon", "duelist"],
-        ["Fade", "initiator"],
-        ["Harbor", "controller"],
-        ["Gekko", "initiator"],
-        ["Deadlock", "sentinel"],
-        ["Iso", "duelist"],
-        ["Clove", "controller"],
-        ["Vyse", "sentinel"],
-        ["Waylay", "duelist"]
+  "Agents": [
+    [
+      "Gekko",
+      "initiator"
     ],
-    "Weapons": [
-        ["Knife", "cut"],
-        ["Classic", "sidearm"],
-        ["Shorty", "sidearm"],
-        ["Frenzy", "sidearm"],
-        ["Ghost", "sidearm"],
-        ["Sherif", "sidearm"],
-        ["Stinger", "smg"],
-        ["Spectre", "smg"],
-        ["Bucky", "shotgun"],
-        ["Judge", "shotgun"],
-        ["Bulldog", "rifle"],
-        ["Guardian", "rifle"],
-        ["Phantom", "rifle"],
-        ["Vandal", "rifle"],
-        ["Marshall", "sniper"],
-        ["Outlaw", "sniper"],
-        ["Operator", "sniper"],
-        ["Ares", "heavy"],
-        ["Odin", "heavy"]
+    [
+      "Fade",
+      "initiator"
+    ],
+    [
+      "Breach",
+      "initiator"
+    ],
+    [
+      "Deadlock",
+      "sentinel"
+    ],
+    [
+      "Tejo",
+      "initiator"
+    ],
+    [
+      "Raze",
+      "duelist"
+    ],
+    [
+      "Chamber",
+      "sentinel"
+    ],
+    [
+      "KAY/O",
+      "initiator"
+    ],
+    [
+      "Skye",
+      "initiator"
+    ],
+    [
+      "Cypher",
+      "sentinel"
+    ],
+    [
+      "Sova",
+      "initiator"
+    ],
+    [
+      "Miks",
+      "controller"
+    ],
+    [
+      "Killjoy",
+      "sentinel"
+    ],
+    [
+      "Harbor",
+      "controller"
+    ],
+    [
+      "Vyse",
+      "sentinel"
+    ],
+    [
+      "Viper",
+      "controller"
+    ],
+    [
+      "Phoenix",
+      "duelist"
+    ],
+    [
+      "Veto",
+      "sentinel"
+    ],
+    [
+      "Astra",
+      "controller"
+    ],
+    [
+      "Brimstone",
+      "controller"
+    ],
+    [
+      "Iso",
+      "duelist"
+    ],
+    [
+      "Clove",
+      "controller"
+    ],
+    [
+      "Neon",
+      "duelist"
+    ],
+    [
+      "Yoru",
+      "duelist"
+    ],
+    [
+      "Waylay",
+      "duelist"
+    ],
+    [
+      "Sage",
+      "sentinel"
+    ],
+    [
+      "Reyna",
+      "duelist"
+    ],
+    [
+      "Omen",
+      "controller"
+    ],
+    [
+      "Jett",
+      "duelist"
     ]
+  ],
+  "Weapons": [
+    [
+      "Melee",
+      "cut"
+    ],
+    [
+      "Frenzy",
+      "sidearm"
+    ],
+    [
+      "Classic",
+      "sidearm"
+    ],
+    [
+      "Bandit",
+      "sidearm"
+    ],
+    [
+      "Ghost",
+      "sidearm"
+    ],
+    [
+      "Sheriff",
+      "sidearm"
+    ],
+    [
+      "Shorty",
+      "sidearm"
+    ],
+    [
+      "Spectre",
+      "smg"
+    ],
+    [
+      "Stinger",
+      "smg"
+    ],
+    [
+      "Judge",
+      "shotgun"
+    ],
+    [
+      "Bucky",
+      "shotgun"
+    ],
+    [
+      "Vandal",
+      "rifle"
+    ],
+    [
+      "Warden",
+      "rifle"
+    ],
+    [
+      "Bulldog",
+      "rifle"
+    ],
+    [
+      "Phantom",
+      "rifle"
+    ],
+    [
+      "Guardian",
+      "rifle"
+    ],
+    [
+      "Operator",
+      "sniper"
+    ],
+    [
+      "Outlaw",
+      "sniper"
+    ],
+    [
+      "Marshal",
+      "sniper"
+    ],
+    [
+      "Odin",
+      "heavy"
+    ],
+    [
+      "Ares",
+      "heavy"
+    ]
+  ]
 }
