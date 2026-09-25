@@ -50,8 +50,8 @@ class RandomValo(commands.Bot):
 
 
     async def load_all_extensions(self) -> None:
-        for plugin in glob.glob(join(PARENT_FOLDER, "plugins", "**")):
-            extention = plugin.split(sep)[-1]
+        for plugin in (PARENT_FOLDER / "plugins").rglob("main.py"):
+            extention = plugin.parent.name
             if extention not in self.IGNORED_EXTENSIONS:
                 try:
                     await bot.load_extension(f"plugins.{extention}.main")
